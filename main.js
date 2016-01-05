@@ -29,25 +29,25 @@ if (dbExists == false) {
 
     //Creates login table.
     db.serialize(function () {
-        if (!dbExists) {
-            db.run("CREATE TABLE Login (Name TEXT) (Value TEXT)");
-        }
+        db.run("CREATE TABLE Login (Name TEXT) (Value TEXT)");
     });
 
     //Start the prompt.
     prompt.start();
 
     //Create variables for the email and password.
-    var botEmail = null;
-    var botPassword = null;
+    var botEmail = "temp";
+    var botPassword = "temp";
 
     //Set up bot login info.
     console.log("Enter the login info for the bot. WARNING: The password is not protected in any way, do not give out the KairosBotConfig.db file to anyone or else they will have the password.");
-    prompt.get(["Email", "Password"], function (err, result) {
+    prompt.get(['Email', 'Password'], function (err, result) {
+        console.log("ping");
         botEmail = result.Email;
         botPassword = result.Password;
     });
 
+    console.log("ping2");
     var stmt = db.prepare("INSERT INTO Login (Name, Value) VALUES ('Email', botEmail)");
     var stmt = db.prepare("INSERT INTO Login (Name, Value) VALUES ('Password', botPassword)");
 
