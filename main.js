@@ -1,9 +1,6 @@
 //Imports the node.js module fs. This is the file system module.
 var fs = require("fs");
 
-//Import prompt module
-var prompt = require("prompt");
-
 //Import SQLite3.
 var sqlite3 = require("sqlite3").verbose();
 
@@ -15,6 +12,13 @@ try {
     process.exit();
 }
 
+//Checks for all the corecode.
+try {
+    var firstRun = require("./corecode/firstrun");
+} catch (e) {
+    console.log("You are missing some of the core code of the bot, please make sure that you installed the bot correctly.")
+}
+
 //Checks if this is the first run of the bot.
 var dbFile = "KairosBotConfig.db";
 var dbExists = fs.existsSync(dbFile);
@@ -24,34 +28,5 @@ var db = new sqlite3.Database(dbFile);
 
 //Runs first time setup if it is the first run.
 if (dbExists == false) {
-
-
-
-    //Creates login table.
-    db.serialize(function () {
-        db.run("CREATE TABLE Login (Name TEXT) (Value TEXT)");
-    });
-
-    //Start the prompt.
-    prompt.start();
-
-    //Create variables for the email and password.
-    var botEmail = "temp";
-    var botPassword = "temp";
-
-    //Set up bot login info.
-    console.log("Enter the login info for the bot. WARNING: The password is not protected in any way, do not give out the KairosBotConfig.db file to anyone or else they will have the password.");
-    prompt.get(['Email', 'Password'], function (err, result) {
-        console.log("ping");
-        botEmail = result.Email;
-        botPassword = result.Password;
-    });
-
-    console.log("ping2");
-    var stmt = db.prepare("INSERT INTO Login (Name, Value) VALUES ('Email', botEmail)");
-    var stmt = db.prepare("INSERT INTO Login (Name, Value) VALUES ('Password', botPassword)");
-
-    stmt.finalize();
-
-    db.close();
+    firstRun.fRun();
 }
