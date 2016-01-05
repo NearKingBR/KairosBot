@@ -30,3 +30,41 @@ var db = new sqlite3.Database(dbFile);
 if (dbExists == false) {
     firstRun.fRun();
 }
+
+
+var auth;
+var client = new discordie();
+var Dispatcher = client.Dispatcher;
+var Events = discordie.Events;
+db.each("SELECT email, password FROM Login", function (err, row) {
+    auth = row;
+    login()
+    return;
+});
+
+function login() {
+    console.log("Logging in");
+    client.connect(auth);
+}
+
+Dispatcher.on(Events.MESSAGE_CREATE, (e) => {
+    console.log("new message: ");
+    console.log(JSON.stringify(e.message, null, "  "));
+    console.log("e.message.content: " + e.message.content);
+
+    var guild = e.message.guild;
+    var channel = e.message.channel;
+    var member = e.message.member;
+    function onError(e) {
+        if (!e) return console.error("Unknown error");
+
+        if(e.response && e.response.error)
+            return console.error(e.response.error);
+
+        console.error(e.toString());
+    }
+
+    if(e.message.content == "!ping") {
+        e.message.channel.sendMessage("pong");
+    }
+});
