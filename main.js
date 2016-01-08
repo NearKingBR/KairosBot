@@ -35,13 +35,11 @@ function startAuth() {
     });
 }
 
-module.exports.startAuth = startAuth;
-
 //Runs first time setup if it is the first run.
 if (dbExists == false) {
     firstRun.fRun();
 } else {
-    startAuth();
+    firstRun.fRun(startAuth);
 }
 
 //Define the auth variable which will be used to login later.

@@ -1,6 +1,6 @@
 module.exports = {
 
-fRun: function () {
+fRun: function (callback) {
 
     //Import SQLite3.
     var sqlite3 = require("sqlite3").verbose();
@@ -9,7 +9,7 @@ fRun: function () {
     var readline = require("readline");
 
     //Allows use of main.js.
-    var main = require("../main.js");
+
 
     //Set up readline.
     var rl = readline.createInterface({
@@ -49,7 +49,7 @@ fRun: function () {
         db.close();
     }
 
-    main.startAuth();
+    callback();
 
     }
 
