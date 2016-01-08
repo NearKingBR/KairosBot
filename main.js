@@ -26,25 +26,45 @@ var dbExists = fs.existsSync(dbFile);
 //Sets the reference for the config database.
 var db = new sqlite3.Database(dbFile);
 
+//Retrieving the login info from the database and setting auth to the info. It then calls the login function.
+function startAuth() {
+    db.each("SELECT email, password FROM Login", function (err, row) {
+        auth = row;
+        login()
+        return;
+    });
+}
+
+module.exports.startAuth = startAuth;
+
 //Runs first time setup if it is the first run.
 if (dbExists == false) {
     firstRun.fRun();
+} else {
+    startAuth();
 }
 
-
+//Define the auth variable which will be used to login later.
 var auth;
+
+//Defining variables that make discordie easier to reference.
 var client = new discordie();
 var Dispatcher = client.Dispatcher;
 var Events = discordie.Events;
-db.each("SELECT email, password FROM Login", function (err, row) {
-    auth = row;
-    login()
-    return;
-});
 
+
+
+
+//This function handles logging into the given discord account.
 function login() {
     console.log("Logging in");
     client.connect(auth);
+    Dispatcher.on(discordie.Events.DISCONNECTED, (e) => {
+        console.log("Failed to login. The login servers may be down or the login info given is incorrect.");
+    });
+    Dispatcher.on(discordie.Events.GATEWAY_READY, (e) => {
+        console.log("Logged in.");
+    });
 }
 
 Dispatcher.on(Events.MESSAGE_CREATE, (e) => {
